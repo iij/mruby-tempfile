@@ -100,5 +100,16 @@ class Tempfile < File
 
   alias :length :size
 
-end
+  def path
+    deleted? ? nil : @path
+  end
 
+  def inspect
+    ret = "<#{self.class}:#{@path}"
+    ret += " (closed)" if closed?
+    ret += ">"
+
+    ret
+  end
+
+end
