@@ -30,7 +30,7 @@ class Tempfile < File
   def make_tmpname(basename, tempdir, n=nil)
     rand_max = 0x100000000
     t = Time.now
-    ymd = t.year + t.month +  t.day
+    ymd = t.year.to_s + t.month.to_s +  t.day.to_s
     pid = Tempfile._getpid
 
     rand_val = rand(t.usec)
