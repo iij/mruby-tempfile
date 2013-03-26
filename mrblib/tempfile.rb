@@ -33,11 +33,13 @@ class Tempfile < File
     ymd = t.year.to_s + t.month.to_s +  t.day.to_s
     pid = Tempfile._getpid
 
-    rand_val = rand(t.usec)
+    rand_str = rand(t.usec).to_s(36)
 
-    while rand_val > rand_max
-      rand_val = rand(Time.now.usec)
+    while rand_str.size < 7
+      rand_str += rand(Time.now.usec).to_s(36)
     end
+
+    rand_str = rand_str[0, 7]
 
     if Array === basename
       prefix = basename[0]
@@ -49,12 +51,12 @@ class Tempfile < File
       raise ArgumentError, "basename is invalied."
     end
 
-    path = "#{tempdir}/#{prefix}#{ymd}-#{pid}-#{rand_val.to_s(36)}"
+    path = "#{tempdir}/#{prefix}#{ymd}-#{pid}-#{rand_str}"
     path += "-#{suffix}" if suffix
 
     while File.exist?(path)
       n = n || 0
-      path = "#{tempdir}/#{prefix}#{ymd}-#{pid}-#{rand_val.to_s(36)}-#{n}{suffix}"
+      path = "#{tempdir}/#{prefix}#{ymd}-#{pid}-#{rand_str}-#{n}{suffix}"
       n.succ!
     end
 
