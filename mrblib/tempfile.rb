@@ -2,6 +2,7 @@
 
 class Tempfile < File
   def initialize(basename, tempdir = Dir::tmpdir)
+    @deleted = false
     @basename = basename
     @mode = "w+"
     @perm = 0600
@@ -69,7 +70,7 @@ class Tempfile < File
 
   def close(real=false)
     super
-    File.delete(@path) if real
+    delete if real
 
     nil
   end
@@ -82,11 +83,16 @@ class Tempfile < File
 
   def delete
     File.delete(@path)
+    @deleted = true
 
     self
   end
 
   alias :unlink :delete
+
+  def deleted?
+    @deleted
+  end
 
   def size
     FileTest.size?(self)
