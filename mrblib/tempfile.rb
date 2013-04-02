@@ -2,6 +2,7 @@
 
 class Tempfile < File
   def initialize(basename, tempdir = Dir::tmpdir)
+    self._bless
     @deleted = false
     @basename = basename
     @mode = "w+"
