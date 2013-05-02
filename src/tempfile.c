@@ -28,7 +28,7 @@ mrb_mruby_tempfile_gem_init(mrb_state *mrb)
   struct RClass *tempfile_class;
   struct RClass *file;
 
-  file = mrb_class_obj_get(mrb, "File");
+  file = mrb_class_get(mrb, "File");
   tempfile_class = mrb_define_class(mrb, "Tempfile", file);
 
   MRB_SET_INSTANCE_TT(tempfile_class, MRB_TT_DATA);
