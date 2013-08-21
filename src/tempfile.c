@@ -33,7 +33,7 @@ mrb_mruby_tempfile_gem_init(mrb_state *mrb)
 
   MRB_SET_INSTANCE_TT(tempfile_class, MRB_TT_DATA);
 
-  mrb_define_class_method(mrb, tempfile_class, "_getpid", mrb_tempfile_getpid, ARGS_NONE());
+  mrb_define_class_method(mrb, tempfile_class, "_getpid", mrb_tempfile_getpid, MRB_ARGS_NONE());
 }
 
 void
