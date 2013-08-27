@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 class Tempfile < File
+  @@tempfiles = []
+
   def initialize(basename, tempdir = Dir::tmpdir)
     self._bless
     @deleted = false
@@ -10,6 +12,10 @@ class Tempfile < File
     @path = @path || make_tmpname(basename, tempdir)
 
     super(@path, @mode, @perm)
+
+    @@tempfiles << self
+
+    self
   end
 
   def self.open(basename, tempdir = Dir::tmpdir, &block)
@@ -26,6 +32,17 @@ class Tempfile < File
       end
     end
 
+  end
+
+  def self.delete_all
+    while not @@tempfiles.empty?
+      @@tempfiles.shift.delete
+    end
+
+  end
+
+  def self.tempfiles
+    @@tempfiles
   end
 
   def make_tmpname(basename, tempdir, n=nil)
@@ -87,6 +104,7 @@ class Tempfile < File
   def delete
     File.delete(@path)
     @deleted = true
+    @@tempfiles.delete(self)
 
     self
   end
