@@ -18,22 +18,6 @@ class Tempfile < File
     self
   end
 
-  def self.open(basename, tempdir = Dir::tmpdir, &block)
-    tempfile = self.new(basename, tempdir)
-
-    return tempfile unless block
-
-    begin
-      yield tempfile
-    ensure
-      begin
-        tempfile.close unless tempfile.closed?
-      rescue => e
-      end
-    end
-
-  end
-
   def self.delete_all
     while not @@tempfiles.empty?
       @@tempfiles.shift.delete
