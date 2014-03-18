@@ -14,6 +14,8 @@ class Tempfile < File
 
     @@tempfiles << self
 
+    _set_path TempfilePath.new(@path)
+
     self
   end
 
