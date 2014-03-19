@@ -52,19 +52,6 @@ mrb_tempfile_path_init(mrb_state *mrb, mrb_value self)
 }
 
 mrb_value
-mrb_tempfile_set_path(mrb_state *mrb, mrb_value self)
-{
-  mrb_value path;
-  struct tempfile_path *tp;
-
-  mrb_get_args(mrb, "o", &path);
-
-  mrb_iv_set(mrb, self, mrb_intern_cstr(mrb, "tempfile_pathname"), path);
-
-  return path;
-}
-
-mrb_value
 mrb_tempfile_getpid(mrb_state *mrb, mrb_value self)
 {
   mrb_value value;
@@ -97,7 +84,6 @@ mrb_mruby_tempfile_gem_init(mrb_state *mrb)
   MRB_SET_INSTANCE_TT(tempfile_class, MRB_TT_DATA);
 
   mrb_define_class_method(mrb, tempfile_class, "_getpid", mrb_tempfile_getpid, MRB_ARGS_NONE());
-  mrb_define_method(mrb, tempfile_class, "_set_path", mrb_tempfile_set_path, MRB_ARGS_REQ(1));
 
   mrb_init_tempfile_path(mrb);
 }

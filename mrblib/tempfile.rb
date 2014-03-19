@@ -10,7 +10,7 @@ class Tempfile < File
 
     super(@path, @mode, @perm)
 
-    _set_path TempfilePath.new(@path)
+    @entity = TempfilePath.new(@path)
 
     self
   end
