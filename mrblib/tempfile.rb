@@ -85,7 +85,7 @@ class Tempfile < File
   end
 
   def size
-    FileTest.size?(self)
+    File.size(@path)
   end
 
   alias :length :size
