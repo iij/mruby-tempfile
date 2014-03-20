@@ -67,8 +67,6 @@ class Tempfile < File
 
   def close!
     close(true)
-
-    nil
   end
 
   def delete
