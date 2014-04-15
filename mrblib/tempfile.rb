@@ -8,11 +8,8 @@ class Tempfile < File
     @perm = 0600
     @path = @path || make_tmpname(basename, tempdir)
 
-    super(@path, @mode, @perm)
-
     @entity = TempfilePath.new(@path)
-
-    self
+    super(@path, @mode, @perm)
   end
 
   def make_tmpname(basename, tempdir, n=nil)
@@ -49,13 +46,6 @@ class Tempfile < File
     end
 
     path
-  end
-
-  def open
-    close unless closed?
-    tempfile  = initialize(@basename)
-
-    tempfile
   end
 
   def close(real=false)
