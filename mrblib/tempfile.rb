@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
 class Tempfile < File
-  @@tempfiles = []
-
   def initialize(basename, tempdir = Dir::tmpdir)
     @deleted = false
     @basename = basename
@@ -10,22 +8,8 @@ class Tempfile < File
     @perm = 0600
     @path = @path || make_tmpname(basename, tempdir)
 
+    @entity = TempfilePath.new(@path)
     super(@path, @mode, @perm)
-
-    @@tempfiles << self
-
-    self
-  end
-
-  def self.delete_all
-    while not @@tempfiles.empty?
-      @@tempfiles.shift.delete
-    end
-
-  end
-
-  def self.tempfiles
-    @@tempfiles
   end
 
   def make_tmpname(basename, tempdir, n=nil)
@@ -64,13 +48,6 @@ class Tempfile < File
     path
   end
 
-  def open
-    close unless closed?
-    tempfile  = initialize(@basename)
-
-    tempfile
-  end
-
   def close(real=false)
     super
     delete if real
@@ -80,14 +57,11 @@ class Tempfile < File
 
   def close!
     close(true)
-
-    nil
   end
 
   def delete
     File.delete(@path)
     @deleted = true
-    @@tempfiles.delete(self)
 
     self
   end
@@ -99,7 +73,7 @@ class Tempfile < File
   end
 
   def size
-    FileTest.size?(self)
+    File.size(@path)
   end
 
   alias :length :size
