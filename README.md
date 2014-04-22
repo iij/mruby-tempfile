@@ -5,6 +5,21 @@ Tempfile class for mruby (experimental)
 
 depend on mruby-io(iij/mruby, mruby-support-io branch), mruby-dir, mrub-simple-random, mruby-sprintf, mruby-time
 
+## Implemented methods
+
+### Tempfile
+ - http://docs.ruby-lang.org/ja/1.9.3/class/Tempfile.html
+
+| method                           | mruby-tempfile | memo |
+| -------------------------------- | -------------- | ---- |
+| Tempfile.new, Tempfile.open      | o              |      |
+| Tempfile#close                   | o              |      |
+| Tempfile#close!                  | o              |      |
+| Tempfile#delete, Tempfile#unlink | o              |      |
+| Tempfile#length, Tempfile#size   | o              |      |
+| Tempfile#open                    | x              |      |
+| Tempfile#path                    | o              |      |
+
 
 ## License
 
