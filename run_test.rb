@@ -23,7 +23,9 @@ MRuby::Build.new do |conf|
   toolchain :gcc
   conf.gembox 'default'
 
-  conf.gem :git => 'https://github.com/iij/mruby-io.git'
+  conf.gem github: 'iij/mruby-dir'
+  conf.gem github: 'iij/mruby-env'
+  conf.gem github: 'iij/mruby-io'
 
   conf.gem File.expand_path(File.dirname(__FILE__))
 end
