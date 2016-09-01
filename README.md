@@ -3,7 +3,7 @@ mruby-tempfile
 
 Tempfile class for mruby (experimental)
 
-depend on mruby-io(iij/mruby, mruby-support-io branch), mruby-dir, mrub-simple-random, mruby-sprintf, mruby-time
+depend on mruby-io(iij/mruby, mruby-support-io branch), mruby-dir, mruby-simple-random, mruby-sprintf, mruby-time
 
 ## Implemented methods
 
