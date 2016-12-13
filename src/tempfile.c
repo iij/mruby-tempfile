@@ -26,10 +26,7 @@ mrb_tempfile_path_free(mrb_state *mrb, void *self)
 {
   struct tempfile_path *tp = self;
 
-  if ( ! access(tp->pathname, F_OK) ) {
-    unlink(tp->pathname);
-  }
-
+  (void)unlink(tp->pathname);
   mrb_free(mrb, self);
 }
 
