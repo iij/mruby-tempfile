@@ -60,11 +60,7 @@ mrb_tempfile_path_init(mrb_state *mrb, mrb_value self)
 mrb_value
 mrb_tempfile_getpid(mrb_state *mrb, mrb_value self)
 {
-  mrb_value value;
-
-  value = mrb_fixnum_value(getpid());
-
-  return value;
+  return mrb_fixnum_value(getpid());
 }
 
 void
