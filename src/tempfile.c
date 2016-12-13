@@ -17,7 +17,7 @@
 static void mrb_tempfile_path_free(mrb_state *, void *);
 
 struct tempfile_path {
-  char *pathname;
+  const char *pathname;
 };
 
 const static struct mrb_data_type mrb_tempfile_path_type = { "TempfilePath", mrb_tempfile_path_free };
