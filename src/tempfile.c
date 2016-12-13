@@ -10,7 +10,6 @@
 #include "mruby/string.h"
 #include "mruby/data.h"
 
-//#include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
 
