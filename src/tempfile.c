@@ -12,11 +12,13 @@
 
 #include <sys/types.h>
 #include <unistd.h>
+#include <stdlib.h>
+#include <string.h>
 
 static void mrb_tempfile_path_free(mrb_state *, void *);
 
 struct tempfile_path {
-  const char *pathname;
+  char *pathname;
 };
 
 const static struct mrb_data_type mrb_tempfile_path_type = { "TempfilePath", mrb_tempfile_path_free };
@@ -26,7 +28,11 @@ mrb_tempfile_path_free(mrb_state *mrb, void *self)
 {
   struct tempfile_path *tp = self;
 
-  (void)unlink(tp->pathname);
+  if (tp->pathname != NULL) {
+    (void)unlink(tp->pathname);
+    mrb_free(mrb, tp->pathname);
+    tp->pathname = NULL;
+  }
   mrb_free(mrb, self);
 }
 
@@ -35,14 +41,18 @@ mrb_tempfile_path_init(mrb_state *mrb, mrb_value self)
 {
   mrb_value path;
   struct tempfile_path *tp;
+  char *cp;
 
   tp = (struct tempfile_path *)mrb_malloc(mrb, sizeof(struct tempfile_path));
+  tp->pathname = NULL;
+  DATA_TYPE(self) = &mrb_tempfile_path_type;
+  DATA_PTR(self)  = tp;
 
   mrb_get_args(mrb, "S", &path);
-  tp->pathname = mrb_string_value_cstr(mrb, &path);
-
-  DATA_TYPE(self) = &mrb_tempfile_path_type;
-  DATA_PTR(self) = tp;
+  cp = (char *)mrb_malloc(mrb, (size_t)RSTRING_LEN(path) + 1);
+  memcpy(cp, RSTRING_PTR(path), RSTRING_LEN(path));
+  cp[RSTRING_LEN(path)] = '\0';
+  tp->pathname = cp;
 
   return self;
 }
