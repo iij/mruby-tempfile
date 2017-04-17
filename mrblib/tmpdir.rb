@@ -4,9 +4,8 @@ class Dir
   end
 
   def self.tmpdir
-    tmpdir = "/tmp" || ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || ENV['USERPROFILE']
+    tmpdir = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || ENV['USERPROFILE'] || "/tmp"
 
     tmpdir
   end
 end
-
