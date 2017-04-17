@@ -7,18 +7,20 @@ depend on mruby-io(iij/mruby, mruby-support-io branch), mruby-dir, mruby-simple-
 
 ## Implemented methods
 
-### Tempfile
  - http://docs.ruby-lang.org/ja/1.9.3/class/Tempfile.html
+ - http://ruby-doc.org/stdlib-2.4.1/libdoc/tmpdir/rdoc/Dir.html
 
-| method                           | mruby-tempfile | memo |
-| -------------------------------- | -------------- | ---- |
-| Tempfile.new, Tempfile.open      | o              |      |
-| Tempfile#close                   | o              |      |
-| Tempfile#close!                  | o              |      |
-| Tempfile#delete, Tempfile#unlink | o              |      |
-| Tempfile#length, Tempfile#size   | o              |      |
-| Tempfile#open                    | x              |      |
-| Tempfile#path                    | o              |      |
+| method                           | status   |
+| -------------------------------- | ---------|
+| Tempfile.new, Tempfile.open      | o        |
+| Tempfile#close                   | o        |
+| Tempfile#close!                  | o        |
+| Tempfile#delete, Tempfile#unlink | o        |
+| Tempfile#length, Tempfile#size   | o        |
+| Tempfile#open                    | x        |
+| Tempfile#path                    | o        |
+| Dir.mktmpdir                     | (notyet) |
+| Dir.tmpdir                       | o        |
 
 
 ## License
