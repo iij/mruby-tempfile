@@ -22,4 +22,5 @@ assert('Dir.tmpdir reacts to ENV changes') do
   assert_equal "/tmp", Dir.tmpdir
   ENV["TMPDIR"] = "/some/where"
   assert_equal "/some/where", Dir.tmpdir
+  ENV.delete "TMPDIR"
 end
