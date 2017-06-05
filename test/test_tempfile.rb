@@ -18,8 +18,18 @@ assert('Tempfile remove tempfile (call Tempfile#close with real = true)') do
 end
 
 assert('Dir.tmpdir reacts to ENV changes') do
-  ["TMPDIR", "TMP", "TEMP", "USERPROFILE"].each { |d| ENV.delete(d) }
-  assert_equal "/tmp", Dir.tmpdir
-  ENV["TMPDIR"] = "/some/where"
-  assert_equal "/some/where", Dir.tmpdir
+  # Save environmental variables
+  saved_env = ENV.to_hash
+  names = ["TMPDIR", "TMP", "TEMP", "USERPROFILE"]
+  begin
+    names.each { |n| ENV.delete(n) }
+    assert_equal "/tmp", Dir.tmpdir
+
+    ENV["TMPDIR"] = "/some/where"
+    assert_equal "/some/where", Dir.tmpdir
+  ensure
+    # Restore environmental variables
+    names.each { |n| ENV[n] = saved_env[n] }
+  end
+  true
 end
