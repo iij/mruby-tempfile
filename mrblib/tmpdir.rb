@@ -6,16 +6,42 @@ class Dir
     tmpdir
   end
 
-  def self._traverse(path)
-    if File.directory?(path)
-      Dir.entries(path) {|entry| _traverse(entry) }
+  def self._tmpname(prefix_suffix = nil, tmpdir = nil)
+    tmpdir ||= tmpdir()
+
+    prefix, suffix = (prefix_suffix || 'd')
+    if ! prefix.respond_to?(:to_str)
+      raise ArgumentError, "unexpected prefix: #{prefix.inspect}"
     end
-  ensure
-    yield path
+    prefix = prefix.to_str
+    if suffix && ! suffix.respond_to?(:to_str)
+      raise ArgumentError, "unexpected suffix: #{suffix.inspect}"
+    end
+    suffix = suffix.to_str if suffix
+    [prefix, suffix].each {|fix|
+      [File::SEPARATOR, File::ALT_SEPARATOR].each {|sep|
+        fix.gsub!(sep, '') if fix && sep
+      }
+    }
+
+    try = 0
+    begin
+      now = Time.now
+      t = sprintf("%04d%02d%02d", now.year, now.month, now.day)
+      path = "#{prefix || ''}#{t}-#{$$}-#{rand(0x100000000).to_s(36)}#{try > 0 ? "-#{try}" : ''}#{suffix || ''}"
+      path = File.join(tmpdir, path)
+      yield path
+    rescue Errno::EEXIST
+      try += 1
+      retry
+    end
+    path
   end
 
-  def self.mktmpdir(prefix_suffix=nil, *rest)
-    path = Tmpname.create(prefix_suffix || "d", *rest) {|n| mkdir(n, 0700)}
+  def self.mktmpdir(prefix_suffix = nil, tmpdir = nil)
+
+    path = _tmpname(prefix_suffix, tmpdir) {|p| mkdir(p, 0700) }
+
     if block_given?
       begin
         yield path
@@ -24,53 +50,19 @@ class Dir
         if stat.world_writable? and !stat.sticky?
           raise ArgumentError, "parent directory is world writable but not sticky"
         end
-        _traverse(path) {|entry|
-          if File.directory?(entry)
-            Dir.delete(entry)
+        remover = lambda {|path|
+          if File.directory?(path)
+            Dir.entries(path) {|entry| remover.call(entry) }
+            Dir.delete(path)
           else
-            File.delete(entry)
+            File.delete(path)
           end
         }
+        remover.call(path)
       end
     else
       path
     end
   end
 
-  module Tmpname
-
-    def self.tmpdir
-      Dir.tmpdir
-    end
-
-    def self.create(basename, tmpdir=nil, opts={})
-      tmpdir ||= tmpdir()
-      max_try = opts.delete(:max_try)
-      n = nil
-      prefix, suffix = basename
-      prefix = ((prefix.respond_to?(:to_str) && prefix.to_str) or
-                raise ArgumentError, "unexpected prefix: #{prefix.inspect}")
-      suffix &&= ((suffix.respond_to?(:to_str) && suffix.to_str) or
-                  raise ArgumentError, "unexpected suffix: #{suffix.inspect}")
-      [prefix, suffix].each {|fix|
-        [File::SEPARATOR, File::ALT_SEPARATOR].each {|sep|
-          fix.gsub!(sep, '') if fix && sep
-        }
-      }
-
-      begin
-        now = Time.now
-        t = sprintf("%04d%02d%02d", now.year, now.month, now.day)
-        path = "#{prefix}#{t}--#{rand(0x100000000).to_s(36)}#{n ? %[-#{n}] : ''}#{suffix||''}"
-        path = File.join(tmpdir, path)
-        yield(path, n, opts)
-      rescue Errno::EEXIST
-        n ||= 0
-        n += 1
-        retry if !max_try or n < max_try
-        raise "cannot generate temporary name using `#{basename}' under `#{tmpdir}'"
-      end
-      path
-    end
-  end
 end
