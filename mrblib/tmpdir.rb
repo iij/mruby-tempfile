@@ -28,7 +28,11 @@ class Dir
     begin
       now = Time.now
       t = sprintf("%04d%02d%02d", now.year, now.month, now.day)
-      path = "#{prefix || ''}#{t}-#{$$}-#{rand(0x100000000).to_s(36)}#{try > 0 ? "-#{try}" : ''}#{suffix || ''}"
+      rand_str = ''
+      while rand_str.size < 7
+        rand_str += rand(0x7fff).to_s(36) # 0x7fff is max value always ensured to be Fixnum
+      end
+      path = "#{prefix || ''}#{t}-#{$$}-#{rand_str}#{try > 0 ? "-#{try}" : ''}#{suffix || ''}"
       path = File.join(tmpdir, path)
       yield path
     rescue Errno::EEXIST
