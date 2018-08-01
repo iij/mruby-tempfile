@@ -32,7 +32,7 @@ class Dir
       while rand_str.size < 7
         rand_str += rand(0x7fff).to_s(36) # 0x7fff is max value always ensured to be Fixnum
       end
-      path = "#{prefix || ''}#{t}-#{$$}-#{rand_str}#{try > 0 ? "-#{try}" : ''}#{suffix || ''}"
+      path = "#{prefix || ''}#{t}-#{Tempfile._getpid}-#{rand_str}#{try > 0 ? "-#{try}" : ''}#{suffix || ''}"
       path = File.join(tmpdir, path)
       yield path
     rescue Errno::EEXIST
