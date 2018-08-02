@@ -19,7 +19,7 @@ depend on mruby-io(iij/mruby, mruby-support-io branch), mruby-dir, mruby-simple-
 | Tempfile#length, Tempfile#size   | o        |
 | Tempfile#open                    | x        |
 | Tempfile#path                    | o        |
-| Dir.mktmpdir                     | (notyet) |
+| Dir.mktmpdir                     | o        |
 | Dir.tmpdir                       | o        |
 
 
