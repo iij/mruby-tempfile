@@ -33,3 +33,12 @@ assert('Dir.tmpdir reacts to ENV changes') do
   end
   true
 end
+
+assert('Dir.mktmpdir') do
+  tmpdir = nil
+  Dir.mktmpdir {|dir|
+    tmpdir = dir
+    assert_true Dir.exist?(tmpdir)
+  }
+  assert_false Dir.exist?(tmpdir)
+end
