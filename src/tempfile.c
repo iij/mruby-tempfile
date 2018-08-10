@@ -3,17 +3,23 @@
 **
 ** See Copyright Notice in mruby.h
 */
-#include "mruby.h"
-#include "mruby/class.h"
-#include "mruby/value.h"
-#include "mruby/variable.h"
-#include "mruby/string.h"
-#include "mruby/data.h"
-
 #include <sys/types.h>
+#include <sys/stat.h>
+#include <fts.h>
 #include <unistd.h>
+
+#include <errno.h>
 #include <stdlib.h>
 #include <string.h>
+
+#include "mruby.h"
+#include "mruby/class.h"
+#include "mruby/data.h"
+#include "mruby/error.h"
+#include "mruby/string.h"
+#include "mruby/value.h"
+#include "mruby/variable.h"
+
 
 static void mrb_tempfile_path_free(mrb_state *, void *);
 
@@ -63,6 +69,68 @@ mrb_tempfile_getpid(mrb_state *mrb, mrb_value self)
   return mrb_fixnum_value(getpid());
 }
 
+mrb_value
+mrb_tempfile_rm_rf(mrb_state *mrb, mrb_value self)
+{
+  FTS *fts;
+  FTSENT *p;
+  int saved_errno = 0;
+  char *pargv[2];
+
+  mrb_get_args(mrb, "z", &pargv[0]);
+  pargv[1] = NULL;
+
+  if ((fts = fts_open(pargv, FTS_PHYSICAL|FTS_NOSTAT, NULL)) == NULL) {
+    mrb_sys_fail(mrb, "fts_open");
+  }
+  while ((p = fts_read(fts)) != NULL) {
+    switch (p->fts_info) {
+      case FTS_DC:
+      case FTS_ERR:
+        saved_errno = p->fts_errno;
+        goto errexit;
+      case FTS_D:
+        continue;
+      case FTS_DNR:
+      case FTS_DP:
+        if (rmdir(p->fts_accpath) == -1 && p->fts_errno != ENOENT) {
+          saved_errno = errno;
+          goto errexit;
+        }
+        break;
+      default:
+        if (unlink(p->fts_accpath) == -1 && p->fts_errno != ENOENT) {
+          saved_errno = errno;
+          goto errexit;
+        }
+        break;
+    }
+  }
+errexit:
+  fts_close(fts);
+  if (saved_errno != 0) {
+    mrb_sys_fail(mrb, "fts_read");
+  }
+  return mrb_nil_value();
+}
+
+mrb_value
+mrb_tempfile_world_writable_and_not_sticky(mrb_state *mrb, mrb_value self)
+{
+  struct stat sb;
+  char *cpath;
+
+  mrb_get_args(mrb, "z", &cpath);
+  if (stat(cpath, &sb) == -1) {
+    mrb_sys_fail(mrb, "stat");
+  }
+  if ((sb.st_mode & S_IWOTH) != 0 && (sb.st_mode & S_ISVTX) == 0) {
+    return mrb_true_value();
+  } else {
+    return mrb_false_value();
+  }
+}
+
 void
 mrb_init_tempfile_path(mrb_state *mrb)
 {
@@ -86,6 +154,8 @@ mrb_mruby_tempfile_gem_init(mrb_state *mrb)
   MRB_SET_INSTANCE_TT(tempfile_class, MRB_TT_DATA);
 
   mrb_define_class_method(mrb, tempfile_class, "_getpid", mrb_tempfile_getpid, MRB_ARGS_NONE());
+  mrb_define_class_method(mrb, tempfile_class, "_rm_rf", mrb_tempfile_rm_rf, MRB_ARGS_REQ(1));
+  mrb_define_class_method(mrb, tempfile_class, "_world_writable_and_not_sticky", mrb_tempfile_world_writable_and_not_sticky, MRB_ARGS_REQ(1));
 
   mrb_init_tempfile_path(mrb);
 }
