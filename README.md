@@ -1,5 +1,6 @@
 mruby-tempfile
 ==============
+[![Build Status](https://travis-ci.org/iij/mruby-tempfile.svg?branch=master)](https://travis-ci.org/iij/mruby-tempfile)
 
 Tempfile class for mruby
 
