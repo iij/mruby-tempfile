@@ -1,5 +1,4 @@
 class Dir
-
   def self.tmpdir
     tmpdir = ENV['TMPDIR'] || ENV['TMP'] || ENV['TEMP'] || ENV['USERPROFILE'] || "/tmp"
 
@@ -43,30 +42,16 @@ class Dir
   end
 
   def self.mktmpdir(prefix_suffix = nil, tmpdir = nil)
+    path = _tmpname(prefix_suffix, tmpdir) { |p| mkdir(p, 0700) }
+    return path unless block_given?
 
-    path = _tmpname(prefix_suffix, tmpdir) {|p| mkdir(p, 0700) }
-
-    if block_given?
-      begin
-        yield path
-      ensure
-        stat = File.stat(File.dirname(path))
-        if stat.world_writable? and !stat.sticky?
-          raise ArgumentError, "parent directory is world writable but not sticky"
-        end
-        remover = lambda {|path|
-          if File.directory?(path)
-            Dir.entries(path) {|entry| remover.call(entry) }
-            Dir.delete(path)
-          else
-            File.delete(path)
-          end
-        }
-        remover.call(path)
+    begin
+      yield path.dup
+    ensure
+      if Tempfile._world_writable_and_not_sticky(File.dirname(path))
+        raise ArgumentError, "parent directory is world writable but not sticky"
       end
-    else
-      path
+      Tempfile._rm_rf(path)
     end
   end
-
 end
