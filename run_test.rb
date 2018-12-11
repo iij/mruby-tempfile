@@ -25,7 +25,6 @@ MRuby::Build.new do |conf|
 
   conf.gem github: 'iij/mruby-dir'
   conf.gem github: 'iij/mruby-env'
-  conf.gem github: 'iij/mruby-io'
 
   conf.gem File.expand_path(File.dirname(__FILE__))
 
