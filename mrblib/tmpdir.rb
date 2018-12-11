@@ -9,14 +9,14 @@ class Dir
     tmpdir ||= tmpdir()
 
     prefix, suffix = (prefix_suffix || 'd')
-    if ! prefix.respond_to?(:to_str)
+    if ! prefix.respond_to?(:__to_str)
       raise ArgumentError, "unexpected prefix: #{prefix.inspect}"
     end
-    prefix = prefix.to_str
-    if suffix && ! suffix.respond_to?(:to_str)
+    prefix = prefix.__to_str
+    if suffix && ! suffix.respond_to?(:__to_str)
       raise ArgumentError, "unexpected suffix: #{suffix.inspect}"
     end
-    suffix = suffix.to_str if suffix
+    suffix = suffix.__to_str if suffix
     [prefix, suffix].each {|fix|
       [File::SEPARATOR, File::ALT_SEPARATOR].each {|sep|
         fix.gsub!(sep, '') if fix && sep
