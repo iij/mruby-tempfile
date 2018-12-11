@@ -9,7 +9,7 @@ class Dir
     tmpdir ||= tmpdir()
 
     prefix, suffix = (prefix_suffix || 'd')
-    if ! (prefix.respond_to?(:to_str) && prefix.respond_to?(:__to_str))
+    if ! (prefix.respond_to?(:to_str) || prefix.respond_to?(:__to_str))
       raise ArgumentError, "unexpected prefix: #{prefix.inspect}"
     end
     begin
@@ -17,7 +17,7 @@ class Dir
     rescue
       prefix = prefix.to_str
     end
-    if suffix && ! (suffix.respond_to?(:to_str) && suffix.respond_to?(:__to_str))
+    if suffix && ! (suffix.respond_to?(:to_str) || suffix.respond_to?(:__to_str))
       raise ArgumentError, "unexpected suffix: #{suffix.inspect}"
     end
     if suffix
