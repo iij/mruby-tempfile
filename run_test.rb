@@ -23,10 +23,6 @@ MRuby::Build.new do |conf|
   toolchain :gcc
   conf.gembox 'default'
 
-  conf.gem github: 'iij/mruby-dir'
-  conf.gem github: 'iij/mruby-env'
-  conf.gem github: 'iij/mruby-io'
-
   conf.gem File.expand_path(File.dirname(__FILE__))
 
   conf.enable_test
