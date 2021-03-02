@@ -13,7 +13,6 @@ class Tempfile < File
   end
 
   def make_tmpname(basename, tempdir, n=nil)
-    rand_max = 0x100000000
     t = Time.now
     ymd = sprintf("%04d%02d%02d", t.year, t.month, t.day)
     pid = Tempfile._getpid
