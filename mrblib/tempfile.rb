@@ -48,7 +48,7 @@ class Tempfile < File
   end
 
   def close(real=false)
-    super
+    super()
     delete if real
 
     nil
